@@ -30,6 +30,40 @@ server.get('/api/lessons', (req, res) => {
     })
 })
 
+server.get('/api/lessons/:id', (req, res ) => {
+    const {id} = req.params;
+
+    Lessons.findById(id)
+    .then(lesson => {
+        if(lesson){
+            res.status(200).json(lesson)
+        } else {
+            res.status(404).json({message: 'record not found'});
+        }
+    })
+    .catch( error => {
+        res.status(500).json({message: 'unable to perform find by ID operation'});
+    })
+})
+
+server.delete('/api/lessons/:id', (req, res ) => {
+    const {id} = req.params;
+
+    Lessons.remove(id)
+    // returns number of affected rows it deleted
+    .then(count => {
+        if(count){
+            res.status(200).json({message: 'record deleted'})
+        } else {
+            res.status(404).json({message: 'record to delete not found'});
+        }
+    })
+    .catch( error => {
+        res.status(500).json({message: 'unable to perform delete operation'});
+    })
+})
+
+
 server.listen(PORT, () => {
     console.log(`\n *** Server running on port ${PORT} ****\n`);
 })
