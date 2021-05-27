@@ -63,6 +63,24 @@ server.delete('/api/lessons/:id', (req, res ) => {
     })
 })
 
+server.patch('/api/lessons/:id', (req, res ) => {
+    const {id} = req.params;
+    const changes = req.body
+
+    Lessons.update(id, changes)
+    // returns number of affected rows it deleted
+    .then(lesson => { // lesson variable here is actually the returned {id}
+        if(lesson){
+            res.status(200).json(lesson)
+        } else {
+            res.status(404).json({message: 'record not found'});
+        }
+    })
+    .catch( error => {
+        res.status(500).json({message: 'unable to perform update operation'});
+    })
+})
+
 
 server.listen(PORT, () => {
     console.log(`\n *** Server running on port ${PORT} ****\n`);

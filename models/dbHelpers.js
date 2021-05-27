@@ -8,7 +8,8 @@ module.exports = {
     add,
     find,
     findById,
-    remove
+    remove,
+    update
 };
 
 
@@ -34,4 +35,15 @@ function remove (id) {
     return db('lessons')
     .where({id:id})
     .del()
+}
+
+function update(id, changes) {
+    return( 
+    db('lessons')
+    .where({id}) // short version than id:id
+    .update(changes, [id]) // 2nd arg of [id] is way of returning
+    .then(() => {
+        return findById(id)
+    })
+    ) 
 }
