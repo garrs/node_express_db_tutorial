@@ -18,7 +18,8 @@ exports.up = function(knex) {
     // below is foreign key
     tbl.integer('lesson_id') 
         .unsigned()
-        .references('id')
+        .notNullable()
+        .references('id') // references the id field of the lessons table
         .inTable('lessons')
         .onDelete('CASCADE') // way to keep info tidied up
         .onUpdate('CASCADE');
