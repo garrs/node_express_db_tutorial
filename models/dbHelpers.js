@@ -7,9 +7,11 @@ const db = knex(config.development)
 module.exports = {
     add,
     find,
-    findById,
+    findLessonById,
+    findMessageById,
     remove,
-    update
+    update,
+    addMessage
 };
 
 
@@ -23,7 +25,7 @@ function find () {
     return db('lessons') // returns all the records
 }
 
-function findById (id) {
+function findLessonById (id) {
     
     return db('lessons')
     .where({id:id})
@@ -33,7 +35,7 @@ function findById (id) {
 function remove (id) {
     
     return db('lessons')
-    .where({id:id})
+    .where({id})
     .del()
 }
 
@@ -43,7 +45,21 @@ function update(id, changes) {
     .where({id}) // short version than id:id
     .update(changes, [id]) // 2nd arg of [id] is way of returning
     .then(() => {
-        return findById(id)
+        return findLessonById(id)
     })
     ) 
+}
+
+function findMessageById (id) {
+    
+    return db('messages')
+    .where({id})
+    .first()
+}
+
+async function addMessage(message, lesson_id) {
+    const [id] = await db('messages')
+    .where({lesson_id}) // match lesson_id from messages table to the lesson_id arg here
+    .insert(message);
+    return findMessageById(id)
 }

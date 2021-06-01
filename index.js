@@ -81,6 +81,37 @@ server.patch('/api/lessons/:id', (req, res ) => {
     })
 })
 
+server.post('/api/lessons/:id/messages', (req, res) => {
+    const {id} = req.params;
+    const msg = req.body;
+
+    if (!msg.lesson_id) { // if lesson_id doesnt already exist there.. lets add it with the code below
+        msg['lesson_id'] = parseInt(id, 10) // assign id gotten from the database to msg(lesson) keyvalue pair
+    }
+
+    Lessons.findLessonById(id)
+    .then(lesson => {
+        if (!lesson) {
+            res.status(404).json('invalid ID');
+        }
+        // check for all required fields with conditions below
+        if (!msg.sender || !msg.text){
+            res.status(400).json('message must provide both sender and text values');
+        }
+        Lessons.addMessage(msg, id)
+        .then(message => {
+            if (message) {
+                res.status(200).json(message)
+            }
+        })
+        .catch(error => {
+            res.status(500).json('failed to add message');
+        })
+    })
+    .catch( error => {
+        res.status(500).json({message: 'error finding lesson'});
+    })
+})
 
 server.listen(PORT, () => {
     console.log(`\n *** Server running on port ${PORT} ****\n`);
