@@ -11,7 +11,9 @@ module.exports = {
     findMessageById,
     remove,
     update,
-    addMessage
+    addMessage,
+    findLessonMessages,
+    removeMessage
 };
 
 
@@ -35,7 +37,7 @@ function findLessonById (id) {
 function remove (id) {
     
     return db('lessons')
-    .where({id})
+    .where({id}) // shorthand of id:id
     .del()
 }
 
@@ -51,10 +53,27 @@ function update(id, changes) {
 }
 
 function findMessageById (id) {
-    
     return db('messages')
     .where({id})
     .first()
+}
+
+function findLessonMessages (lesson_id) {
+    return db('lessons as l') // join parent table 'lessons' with child table 'messages' using FK of messages table
+    .join("messages as m", "l.id", "m.lesson_id") // 2nd arg: primary key 3rd arg: foreign key
+    .select(
+        "l.id as LessonID", // aliasing
+        "l.name as LessonName",
+        "m.id as MessageID",
+        "m.sender",
+        "m.text"
+    ).where({lesson_id}) // lesson_id from messages tables must equal lesson_id we passed here as arg
+}
+
+function removeMessage (id) { // we get the message id here
+    return db('messages')
+    .where({id})
+    .del()
 }
 
 async function addMessage(message, lesson_id) {

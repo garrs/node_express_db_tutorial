@@ -1,6 +1,9 @@
 const express = require("express")
+const { restart } = require("nodemon")
 const Lessons = require('./models/dbHelpers')
 const server = express()
+
+// these are our endpoints
 
 server.use(express.json()) // teach server about JSON
 
@@ -110,6 +113,34 @@ server.post('/api/lessons/:id/messages', (req, res) => {
     })
     .catch( error => {
         res.status(500).json({message: 'error finding lesson'});
+    })
+})
+
+server.get('/api/lessons/:id/messages', (req, res) => {
+    const {id} = req.params
+    
+    Lessons.findLessonMessages(id)
+    .then(lessons =>{
+        res.status(200).json(lessons)
+    })
+    .catch( error => {
+        res.status(500).json({message: 'error retrieving messages'});
+    })
+})
+
+server.delete("/api/messages/:id", (req, res) => {
+    const {id} = req.params
+    
+    Lessons.removeMessage(id)
+    .then(count => {
+        if (count > 0) {
+            res.status(200).json({message: `message with ID ${id} was successfully deleted`})
+        } else {
+            res.status(404).json({message: 'no message with that ID'});
+        }
+    })
+    .catch( error => {
+        res.status(500).json({message: 'error deleting message'});
     })
 })
 
