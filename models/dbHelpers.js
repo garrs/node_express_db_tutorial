@@ -6,7 +6,8 @@ const db = knex(config.development)
 // better to name these methods different from axios' CRUD methods
 module.exports = {
     add,
-    find,
+    findLesson,
+    findMessage,
     findLessonById,
     findMessageById,
     remove,
@@ -22,9 +23,14 @@ async function add (lesson) {
     return id
 }
 
-function find () {
+function findLesson () {
     // db is the entire database and lessons is just the table
     return db('lessons') // returns all the records
+}
+
+function findMessage () {
+    // db is the entire database and lessons is just the table
+    return db('messages') // returns all the records
 }
 
 function findLessonById (id) {
